@@ -13,6 +13,7 @@ import com.lhd.mynews.R;
 import com.lhd.mynews.activity.MainActivity;
 import com.lhd.mynews.base.BaseFragment;
 import com.lhd.mynews.domain.NewsCenterBean;
+import com.lhd.mynews.pager.NewCenterPager;
 import com.lhd.mynews.utils.DensityUtils;
 
 import java.util.List;
@@ -41,6 +42,18 @@ public class LeftMenuFragment extends BaseFragment
         listView.setDividerHeight(0);
         listView.setSelector(android.R.color.transparent);//把ListVeiw中某一个条按下效果屏幕
 
+
+        return listView;
+
+    }
+
+
+
+    @Override
+    public void initData()
+    {
+        super.initData();
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -50,25 +63,27 @@ public class LeftMenuFragment extends BaseFragment
                 currentPosition = position;
                 adapter.notifyDataSetChanged();
                 //关闭左侧菜单
-                MainActivity mainActivity= (MainActivity) mContext;
+                MainActivity mainActivity = (MainActivity) mContext;
                 mainActivity.getSlidingMenu().toggle();
 
                 //切换新闻里面的页面到对应的部分
 
+                Log.e(TAG, "currentPosition==" + currentPosition);
+                switcPager(currentPosition);
             }
         });
-        return listView;
-
-    }
-
-    @Override
-    public void initData()
-    {
-        super.initData();
 
         Log.e("TAG", "左侧菜单的数据被初始化了");
     }
 
+
+    private void switcPager(int position)
+    {
+        MainActivity mainActivity= (MainActivity) mContext;
+        ContentFragment contentFragment=mainActivity.getContentFragment();
+        NewCenterPager newsCenterPager=contentFragment.getNewCenterPager();
+        newsCenterPager.switchPager(position);
+    }
     public void setData(List<NewsCenterBean.DataBean> leftMenuData)
     {
         this.leftMenuData = leftMenuData;

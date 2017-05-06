@@ -80,6 +80,11 @@ public class ContentFragment extends BaseFragment
 
     }
 
+    public NewCenterPager getNewCenterPager()
+    {
+        return (NewCenterPager) basePagerList.get(1);
+
+    }
 
 
     class MyOnPageChangeListener implements ViewPager.OnPageChangeListener

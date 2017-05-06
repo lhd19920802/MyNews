@@ -3,6 +3,7 @@ package com.lhd.mynews.activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -18,6 +19,8 @@ public class MainActivity extends SlidingFragmentActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         //设置左侧菜单
@@ -50,5 +53,10 @@ public class MainActivity extends SlidingFragmentActivity
     {
 
         return (LeftMenuFragment) getSupportFragmentManager().findFragmentByTag("menu_fragment");
+    }
+
+    public ContentFragment getContentFragment()
+    {
+        return (ContentFragment) getSupportFragmentManager().findFragmentByTag("content_fragment");
     }
 }
