@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -21,6 +20,7 @@ import com.lhd.mynews.domain.TabDetailBean;
 import com.lhd.mynews.utils.CacheUtils;
 import com.lhd.mynews.utils.DensityUtils;
 import com.lhd.mynews.utils.Url;
+import com.lhd.mynews.view.RefreshListView;
 
 import org.xutils.common.Callback;
 import org.xutils.common.util.DensityUtil;
@@ -46,7 +46,7 @@ public class TableDetailPager extends MenuDetailBasePager
     private ViewPager vp_tab_detailpager;
     private TextView tv_detail_title;
     private LinearLayout ll_point_group;
-    private ListView lv_tab_detail;
+    private RefreshListView lv_tab_detail;
     /**
      * 顶部新闻的数据
      */
@@ -85,10 +85,11 @@ public class TableDetailPager extends MenuDetailBasePager
         vp_tab_detailpager = (ViewPager) headerView.findViewById(R.id.vp_tab_detailpager);
         tv_detail_title = (TextView) headerView.findViewById(R.id.tv_detail_title);
         ll_point_group = (LinearLayout) headerView.findViewById(R.id.ll_point_group);
-        lv_tab_detail = (ListView) view.findViewById(R.id.listview_detail);
+        lv_tab_detail = (RefreshListView) view.findViewById(R.id.listview_detail);
 
         //添加为头部
-        lv_tab_detail.addHeaderView(headerView);
+//        lv_tab_detail.addHeaderView(headerView);
+        lv_tab_detail.addTopNews_refresh(headerView);
         return view;
     }
 
@@ -115,20 +116,27 @@ public class TableDetailPager extends MenuDetailBasePager
     private void getDataFromNet()
     {
         RequestParams params = new RequestParams(url);
+        params.setConnectTimeout(2000);
         x.http().get(params, new Callback.CommonCallback<String>()
         {
             @Override
             public void onSuccess(String result)
             {
                 CacheUtils.putString(mContext, url, result);
-                Log.e(TAG, "result==" + result);
+
+                Log.e(TAG, "onSuccess==" + result);
                 processData(result);
+
+                lv_tab_detail.setOnRefreshListener(new MyOnRefreshListener());
+                //联网成功
+                lv_tab_detail.onFinishRefresh(true);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback)
             {
-
+                Log.e(TAG, "onError=="+ex.getMessage());
+                lv_tab_detail.onFinishRefresh(false);
             }
 
             @Override
@@ -145,6 +153,15 @@ public class TableDetailPager extends MenuDetailBasePager
         });
     }
 
+    class MyOnRefreshListener implements RefreshListView.OnRefreshListener
+    {
+
+        @Override
+        public void onRefresh()
+        {
+            getDataFromNet();
+        }
+    }
     //解析并显示数据
     private void processData(String json)
     {

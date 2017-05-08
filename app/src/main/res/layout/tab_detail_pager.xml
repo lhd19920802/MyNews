@@ -6,7 +6,7 @@
 
 
 
-    <ListView
+    <com.lhd.mynews.view.RefreshListView
         android:id="@+id/listview_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

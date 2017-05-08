@@ -79,6 +79,7 @@ public class LeftMenuFragment extends BaseFragment
 
     private void switcPager(int position)
     {
+//        adapter.notifyDataSetChanged();
         MainActivity mainActivity= (MainActivity) mContext;
         ContentFragment contentFragment=mainActivity.getContentFragment();
         NewCenterPager newsCenterPager=contentFragment.getNewCenterPager();
@@ -86,6 +87,7 @@ public class LeftMenuFragment extends BaseFragment
     }
     public void setData(List<NewsCenterBean.DataBean> leftMenuData)
     {
+
         this.leftMenuData = leftMenuData;
         for (int i = 0; i < leftMenuData.size(); i++)
         {
