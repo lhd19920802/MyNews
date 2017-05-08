@@ -30,6 +30,7 @@ public class RefreshListView extends ListView
     //包括下拉刷新布局和顶部新闻的布局
     private LinearLayout refresh_topNews;
 
+
     private ImageView iv_header_refresh;
     private ProgressBar pb_header_refresh;
 
