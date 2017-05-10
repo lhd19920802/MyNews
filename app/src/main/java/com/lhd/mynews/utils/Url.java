@@ -9,6 +9,7 @@ package com.lhd.mynews.utils;
 public class Url
 {
 //    public static final String BASE_URL="http://192.168.191.1:8080/zhbj";
-    public static final String BASE_URL="http://192.168.0.250:8080/zhbj";
+    public static final String BASE_URL="http://192.168.0.234:8080/zhbj";
     public static final String NEWS_CENTER_URL =BASE_URL+ "/categories.json";
+    public static final String PHOTOS_URL =BASE_URL+ "/photos/photos_1.json";
 }

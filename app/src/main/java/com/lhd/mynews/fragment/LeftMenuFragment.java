@@ -43,6 +43,7 @@ public class LeftMenuFragment extends BaseFragment
         listView.setSelector(android.R.color.transparent);//把ListVeiw中某一个条按下效果屏幕
 
 
+
         return listView;
 
     }
@@ -53,6 +54,7 @@ public class LeftMenuFragment extends BaseFragment
     public void initData()
     {
         super.initData();
+//        switcPager(0);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -103,6 +105,7 @@ public class LeftMenuFragment extends BaseFragment
 
     class MyAdapter extends BaseAdapter
     {
+
 
         @Override
         public int getCount()

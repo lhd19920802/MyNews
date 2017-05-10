@@ -49,6 +49,8 @@ public class BasePager
                 mainActivity.getSlidingMenu().toggle();
             }
         });
+
+
         return view;
 
     }

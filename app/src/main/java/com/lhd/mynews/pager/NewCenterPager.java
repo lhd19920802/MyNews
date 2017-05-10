@@ -8,6 +8,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lhd.mynews.activity.MainActivity;
 import com.lhd.mynews.base.BasePager;
@@ -28,6 +35,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,16 +82,63 @@ public class NewCenterPager extends BasePager
             processData(saveJson);
         }
         //获取数据
-        getDataFromNet();
+        //                getDataFromNet();
 
-        getDataFromNet2();
+        //        getDataFromNet2();
+        getDataFromNetByVolley();
 
+    }
 
+    private void getDataFromNetByVolley()
+    {
+
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+        StringRequest request = new StringRequest(Url.NEWS_CENTER_URL, new Response
+                .Listener<String>()
+        {
+            @Override
+            public void onResponse(String result)
+            {
+                //                Log.e("TAG", "volley  onResponse==" + s);
+                Log.e(TAG, "result==" + result);
+                Log.e(TAG, "线程==" + Thread.currentThread().getName());
+                CacheUtils.putString(mContext, Url.NEWS_CENTER_URL, result);
+                processData(result);
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError volleyError)
+            {
+                Log.e("TAG", "volley onErrorResponse==" + volleyError);
+            }
+        })
+        {
+            //解决乱码问题
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response)
+            {
+                try
+                {
+                    String parsed = new String(response.data, "utf-8");
+                    return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    e.printStackTrace();
+
+                }
+                return super.parseNetworkResponse(response);
+            }
+        };
+
+        queue.add(request);
     }
 
     private void getDataFromNet2()
     {
-        RequestParams params = new RequestParams("http://api.bilibili.com/online_list?_device=android&platform=android&typeid=13&sign=a520d8d8f7a7240013006e466c8044f7");
+        RequestParams params = new RequestParams("http://api.bilibili" + ""
+                                                 + ".com/online_list?_device=android&platform=android&typeid=13&sign=a520d8d8f7a7240013006e466c8044f7");
         x.http().post(params, new Callback.CacheCallback<String>()
         {
             @Override
@@ -98,9 +153,9 @@ public class NewCenterPager extends BasePager
             {
                 Log.e(TAG, "getDataFromNet2  result==" + result);
                 Log.e(TAG, "线程==" + Thread.currentThread().getName());
-//                CacheUtils.putString(mContext, Url.NEWS_CENTER_URL, result);
+                //                CacheUtils.putString(mContext, Url.NEWS_CENTER_URL, result);
                 TestBean testBean = processData2(result);
-                Log.e("TAG", "手动解析json成功==="+testBean.getList().get(1).getTitle());
+                Log.e("TAG", "手动解析json成功===" + testBean.getList().get(1).getTitle());
             }
 
             @Override
@@ -230,8 +285,10 @@ public class NewCenterPager extends BasePager
         leftMenuData = newsCenterBean.getData();
         //准备数据
         menuDetailBasePagerList = new ArrayList<>();
-        menuDetailBasePagerList.add(new NewsMenuDetailPager(mContext, leftMenuData.get(0).getChildren()));
-        menuDetailBasePagerList.add(new TopicMenuDetailPager(mContext, leftMenuData.get(0).getChildren()));
+        menuDetailBasePagerList.add(new NewsMenuDetailPager(mContext, leftMenuData.get(0)
+                .getChildren()));
+        menuDetailBasePagerList.add(new TopicMenuDetailPager(mContext, leftMenuData.get(0)
+                .getChildren()));
         menuDetailBasePagerList.add(new PhotosMenuDetailPager(mContext));
         menuDetailBasePagerList.add(new InteracMenuDetailPager(mContext));
 
@@ -261,5 +318,27 @@ public class NewCenterPager extends BasePager
 
         fl_base_content.removeAllViews();
         fl_base_content.addView(rootView);
+
+        if (position == 2)
+        {
+            //显示切换按钮
+            ib_switche_mode.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            //隐藏切换按钮
+            ib_switche_mode.setVisibility(View.GONE);
+        }
+
+
+        ib_switche_mode.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                PhotosMenuDetailPager photosMenuDetailPager= (PhotosMenuDetailPager) menuDetailBasePagerList.get(2);
+                photosMenuDetailPager.switchListAndGrid(ib_switche_mode);
+            }
+        });
     }
 }
